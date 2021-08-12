@@ -6,10 +6,14 @@ using MovieDB.Middleware;
 using MovieDB.Models;
 using MovieDB.Repository.Interfaces;
 using Newtonsoft.Json;
+using Serilog;
+using StackExchange.Profiling;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace MovieDB.Repository
 {
@@ -35,60 +39,84 @@ namespace MovieDB.Repository
         }
 
 
-        public ActionResult GetMovie(int id)
+        public async Task<ActionResult> GetMovie(int id)
         {
-            var result = MovieCache.Find(movie => movie.Id == id).ToList();
-
+            //Checking Movie Cache in Mongo
+            List<MovieInfo> result;
+            using (MiniProfiler.Current.Step("Time taken to retrieve records from Movie Cache in MongoDB"))
+            {
+                result = MovieCache.Find(movie => movie.Id == id).ToList();
+            }
+                
             //List is Empty retrieve from API
             if (!result.Any()) 
             {
-                using var client = HttpClientFactory.CreateClient("MovieDbAPI");
-                using var response = client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  //ApiConfig.Value.RestApi.RequestUrl(id)
-                var responseBody = response.Result.Content.ReadAsStringAsync().Result;
-
+                //Response from API
+                Task<HttpResponseMessage> response;
+                string responseBody;
+                using(MiniProfiler.Current.Step("Time taken to retrieve response from The MovieDB API"))
+                {
+                    using var client = HttpClientFactory.CreateClient("MovieDbAPI");
+                    //using var response = client.GetAsync($"/{id}?api_key={ApiConfig.Value.RestApi.ApiKey}")
+                    response = client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  //ApiConfig.Value.RestApi.RequestUrl(id)
+                    responseBody = response.Result.Content.ReadAsStringAsync().Result;
+                }
+                
+                //Success response
                 if (response.Result.StatusCode == HttpStatusCode.OK)
                 {
-                    //error without {get;set;} in MovieInfo
-                    var jsonResult = JsonConvert.DeserializeObject<MovieInfo>(responseBody);
-
-
                     if (AuditMiddleware.Logger != null)
                     {
                         var transId = Guid.NewGuid().ToString();
                         AuditLogger.RequestInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.ApiFind, id.ToString());
                         AuditLogger.ResponseInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.Insert, DBSettings.Value.DatabaseName, DBSettings.Value.CollectionName, result.ToString());
                     }
-                    //Update into Mongo Cache (try using upsert)
-                    MovieCache.InsertOneAsync(jsonResult);
 
-                    return new JsonResult(new SuccessResponse() 
+                    var jsonResult = JsonConvert.DeserializeObject<MovieInfo>(responseBody);
+
+                    //Update Movie Cache in MongoDB
+                    var filter = Builders<MovieInfo>.Filter.Eq(movie => movie.Id, id);     
+                    using(MiniProfiler.Current.Step("Time taken to Upsert record into Movie Cache in MongoDB"))
                     {
-                        Source = "MovieDB API.",
+                        await MovieCache.ReplaceOneAsync(
+                                    filter: filter,
+                                    options: new ReplaceOptions { IsUpsert = true },
+                                    replacement: jsonResult);
+                        //MovieCache.InsertOneAsync(jsonResult)
+                    }
+
+                    return new ContentResult
+                    {
+                        Content = JsonConvert.SerializeObject(jsonResult), //getting string content for responseBody
                         ContentType = Constants.Json,
-                        StatusCode = 200,
-                        Content = jsonResult
-                        
-                    });
+                        StatusCode = 200
+                    };
                 }
                 else
                 {
                     //Response = 401(invalid api key) , 404(resouce not found)
-                    var jsonResult = JsonConvert.DeserializeObject<FailureRepsonse>(responseBody);
+                    //var jsonResult = JsonConvert.DeserializeObject<FailureRepsonse>(responseBody)  //mapping API response to our FailureResponse
                     var errorResponse = new ErrorResponse();
+                    int statusCode;
 
-                    if(response.Result.StatusCode == HttpStatusCode.NotFound)
+                    if (response.Result.StatusCode == HttpStatusCode.NotFound)
                     {
                         errorResponse.ErrorMessage = "Resource Not Found.";
                         errorResponse.StatusCode = 404; //NotFound
+                        statusCode = 404;
                     }
                     else
                     {
                         errorResponse.ErrorMessage = "Invalid Api Key.";
                         errorResponse.StatusCode = 401; //Unauthorized
+                        statusCode = 401;
                     }
-
-                    return new JsonResult(errorResponse);
-
+                    return new ContentResult
+                    {
+                        Content = JsonConvert.SerializeObject(errorResponse),
+                        ContentType = Constants.Json,
+                        StatusCode = statusCode
+                    };
                 }
             }
 
@@ -100,13 +128,33 @@ namespace MovieDB.Repository
                 AuditLogger.ResponseInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.Find, DBSettings.Value.DatabaseName, DBSettings.Value.CollectionName, result.ToString());
             }
 
-            return new JsonResult(new SuccessResponse()
+            return new ContentResult
             {
-                Source = "Movie Cache in MongoDB.",
+                Content = JsonConvert.SerializeObject(result[0]),
                 ContentType = Constants.Json,
-                StatusCode = 200,
-                Content = result[0]
-            });
+                StatusCode = 200
+            };
         }
+
+
+        #region IsAlive
+        public async Task<bool> IsAliveAsync()
+        {
+            try
+            {
+                using (MiniProfiler.Current.Step(Constants.HealthCommand))
+                {
+                    await Task.Delay(1);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Log.Error(ex.Message);
+            }
+            return false;
+        }
+        #endregion
     }
 }

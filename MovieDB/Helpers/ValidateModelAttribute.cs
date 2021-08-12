@@ -9,17 +9,17 @@ namespace MovieDB.Helpers
 //ActionFilter = ValidateModel
 public class ValidateModelAttribute : ActionFilterAttribute
 {
-    public override void OnActionExecuting(ActionExecutingContext actionContext)
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!actionContext.ModelState.IsValid)
+        if (!context.ModelState.IsValid)
         {
             var errorResponse = new ErrorResponse
             {
                 StatusCode = 400,
-                ErrorMessage = string.Join(", ", actionContext.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)).ToString()
+                ErrorMessage = string.Join(", ", context.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)).ToString()
             };
-            actionContext.Result = new BadRequestObjectResult(errorResponse);
-        }; 
+            context.Result = new BadRequestObjectResult(errorResponse);
+        } 
     }
 }
 }

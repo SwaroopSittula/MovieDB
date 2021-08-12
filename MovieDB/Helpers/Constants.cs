@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MovieDB.Helpers
 {
-    public class Constants
+    public static class Constants
     {
         public const string Json = "apllication/json";
 
@@ -17,5 +17,12 @@ namespace MovieDB.Helpers
         public const string Find = "Find from MovieCache in MongoDB";
         public const string Insert = "Insert into MovieCache in MongoDB";
         public const string GetMovie = "https://localhost:44377/movie/id";
+
+
+        /// <summary>
+        /// Health Constants
+        /// </summary>
+        public const string Health = "Health";
+        public const string HealthCommand = "HealthCommand";
     }
 }

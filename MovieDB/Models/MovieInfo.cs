@@ -13,7 +13,7 @@ namespace MovieDB.Models
         public string BackdropPath { get; set; }
 
         [JsonProperty("belongs_to_collection")]
-        public Belongs_To_Collection BelongsToCollection { get; set; } //mostly null.......check movie id = 11,21
+        public BelongsToCollection BelongsToCollection { get; set; } //mostly null.......check movie id = 11,21
 
         [JsonProperty("budget")] 
         public int Budget { get; set; }
@@ -46,10 +46,10 @@ namespace MovieDB.Models
         public string PosterPath { get; set; }
 
         [JsonProperty("production_companies")] 
-        public List<Production_Companies> ProductionCompanies { get; set; } //array[object]
+        public List<ProductionCompanies> ProductionCompanies { get; set; } //array[object]
 
         [JsonProperty("production_countries")] 
-        public List<Production_Countries> ProductionCountries { get; set; }
+        public List<ProductionCountries> ProductionCountries { get; set; }
 
         [JsonProperty("release_date")] 
         public string ReleaseDate { get; set; } //format = date
@@ -61,7 +61,7 @@ namespace MovieDB.Models
         public int? Runtime { get; set; }
 
         [JsonProperty("spoken_languages")]
-        public List<Spoken_Languages> SpokenLanguages { get; set; }
+        public List<SpokenLanguages> SpokenLanguages { get; set; }
 
         [JsonProperty("status")] 
         public string Status { get; set; } //allowed values = Rumored, Planned, In Production, Post Production, Released, Canceled
@@ -82,7 +82,7 @@ namespace MovieDB.Models
         public int VoteCount { get; set; }
     }
 
-    public class Belongs_To_Collection
+    public class BelongsToCollection
     {
         [JsonProperty("id")]    
         public int Id { get; set; }
@@ -106,7 +106,7 @@ namespace MovieDB.Models
         public string Name { get; set; }
     }
 
-    public class Production_Companies
+    public class ProductionCompanies
     {
         [JsonProperty("id")]
         public int Id { get; set; }
@@ -121,7 +121,7 @@ namespace MovieDB.Models
         public string OriginCountry { get; set; }
     }
 
-    public class Production_Countries
+    public class ProductionCountries
     {
         [JsonProperty("iso_3166_1")]
         public string ISO_3166_1 { get; set; }
@@ -130,7 +130,7 @@ namespace MovieDB.Models
         public string Name { get; set; }
     }
 
-    public class Spoken_Languages
+    public class SpokenLanguages
     {
         [JsonProperty("english_name")]
         public string EnglishName { get; set; }

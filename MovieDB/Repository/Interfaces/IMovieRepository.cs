@@ -8,6 +8,7 @@ namespace MovieDB.Repository.Interfaces
 {
     public interface IMovieRepository
     {
-        ActionResult GetMovie(int id);
+        Task<ActionResult> GetMovie(int id);
+        public Task<bool> IsAliveAsync();
     }
 }

@@ -30,9 +30,9 @@ namespace MovieDB
                           .ReadFrom.Configuration(Configuration)
                           .CreateLogger();
 
-            services.AddHttpClient("MovieDbAPI",client =>
+            services.AddHttpClient("MovieDbAPI", client =>
             {
-                client.BaseAddress = new Uri("https://api.themoviedb.org/3/movie");
+                client.BaseAddress = new Uri(Configuration.GetValue<string>("MovieDBSettings:RestApi:BaseUrl"));
             });
 
             //Configurations settings

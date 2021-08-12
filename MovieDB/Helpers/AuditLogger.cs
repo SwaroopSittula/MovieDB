@@ -5,7 +5,7 @@ using MovieDB.Middleware;
 
 namespace MovieDB.Helpers
 {
-    public class AuditLogger
+    public static class AuditLogger
     {
         public static void RequestInfo(string transactionId, string method, string path, string queryString, string payload)
         {
