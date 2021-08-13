@@ -27,9 +27,9 @@ namespace MovieDB.Controllers
         [ValidateModel]
         //1) checks if input is int or not      2) validate the annotations
         // movie/no-input   movie/.    movie/..   --> no response (they point to different end points than this may be)
-        public Task<ActionResult> GetMovie([RegularExpression(@"^(\d+)$", ErrorMessage ="Bad Request!")] int id)
+        public async Task<IActionResult> GetMovie([RegularExpression(@"^(\d+)$", ErrorMessage ="Bad Request!")] int id)
         {
-            return  MovieRepo.GetMovie(id);
+            return await MovieRepo.GetMovie(id);
         }
 
 

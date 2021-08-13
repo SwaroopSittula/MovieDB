@@ -74,6 +74,9 @@ namespace MovieDB
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware(typeof(AuditMiddleware));
+            app.UseMiddleware(typeof(ErrorHandlerMiddleware));
+
             app.UseHttpsRedirection();
 
             //middlewares
@@ -84,7 +87,8 @@ namespace MovieDB
             }
             app.UseOpenApi();
             app.UseSwaggerUi3();
-            app.UseMiddleware(typeof(AuditMiddleware));
+
+            
 
             app.UseRouting();
 

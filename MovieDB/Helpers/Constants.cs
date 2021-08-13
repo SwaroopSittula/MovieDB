@@ -24,5 +24,11 @@ namespace MovieDB.Helpers
         /// </summary>
         public const string Health = "Health";
         public const string HealthCommand = "HealthCommand";
+
+
+        /// <summary>
+        /// Testing ValidateAttribute Filter
+        /// </summary>
+        public const string ID_Required = "Id id required";
     }
 }

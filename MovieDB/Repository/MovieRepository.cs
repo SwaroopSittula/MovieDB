@@ -26,6 +26,7 @@ namespace MovieDB.Repository
         private readonly IMongoCollection<MovieInfo> MovieCache;
         private readonly IOptions<DatabaseSettings> DBSettings;
 
+
         public MovieRepository(IHttpClientFactory httpClientFactory, IOptions<MovieDBSettings> apiConfig, IOptions<DatabaseSettings> dbSettings)
         {
             HttpClientFactory = httpClientFactory;
@@ -58,7 +59,8 @@ namespace MovieDB.Repository
                 {
                     using var client = HttpClientFactory.CreateClient("MovieDbAPI");
                     //using var response = client.GetAsync($"/{id}?api_key={ApiConfig.Value.RestApi.ApiKey}")
-                    response = client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  //ApiConfig.Value.RestApi.RequestUrl(id)
+                    //ApiConfig.Value.RestApi.RequestUrl(id)
+                    response =  client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  
                     responseBody = response.Result.Content.ReadAsStringAsync().Result;
                 }
                 
@@ -97,26 +99,30 @@ namespace MovieDB.Repository
                     //Response = 401(invalid api key) , 404(resouce not found)
                     //var jsonResult = JsonConvert.DeserializeObject<FailureRepsonse>(responseBody)  //mapping API response to our FailureResponse
                     var errorResponse = new ErrorResponse();
-                    int statusCode;
+                    //int statusCode
 
                     if (response.Result.StatusCode == HttpStatusCode.NotFound)
                     {
-                        errorResponse.ErrorMessage = "Resource Not Found.";
+                        errorResponse.ErrorMessage = "Resource Not Found!";
                         errorResponse.StatusCode = 404; //NotFound
-                        statusCode = 404;
+                        //statusCode = 404
                     }
                     else
                     {
-                        errorResponse.ErrorMessage = "Invalid Api Key.";
+                        errorResponse.ErrorMessage = "Unauthorized: Invalid Api Key!";
                         errorResponse.StatusCode = 401; //Unauthorized
-                        statusCode = 401;
+                        //statusCode = 401
                     }
-                    return new ContentResult
-                    {
+
+                    Exception exception = new Exception(JsonConvert.SerializeObject(errorResponse));
+                    throw exception;
+                    
+                    /*
+                      return new ContentResult
                         Content = JsonConvert.SerializeObject(errorResponse),
                         ContentType = Constants.Json,
                         StatusCode = statusCode
-                    };
+                    */
                 }
             }
 
