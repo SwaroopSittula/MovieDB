@@ -38,7 +38,7 @@ namespace MovieDB.Middleware
                 await context.Response.WriteAsync(exception.Message);
 
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
                 var result = JsonConvert.SerializeObject(new ErrorResponse()
                 {
