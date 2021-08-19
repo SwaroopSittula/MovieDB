@@ -7,16 +7,38 @@ namespace MovieDB.Helpers
 {
     public static class Constants
     {
-        public const string Json = "apllication/json";
+        public const string Json = "application/json";
+
+
+        #region AudiLoggingConstants
 
         /// <summary>
-        /// Audit Logger input parameters
+        /// Audit Logger input request & response parameters
+        /// GetMethod is type of Http Endpoint request (Get/Post/Put/Delete)
         /// </summary>
         public const string GetMethod = "Get";
-        public const string ApiFind = "Find from The MovieDB API";
+        /// <summary>
+        /// Request Query is to Fing Movie based on MovieID
+        /// </summary>
+        public const string FindMovie = "Find Movie for the provided Id";
+        /// <summary>
+        /// The query parameter for response is Find Movie from the online API source
+        /// </summary>
+        public const string ApiFind = "Find(Get) from The Movie DB(TMDB) Api online";
+        /// <summary>
+        /// Requested Movie info response is retrieved from Movie cahce in MongoDB
+        /// </summary>
         public const string Find = "Find from MovieCache in MongoDB";
+        /// <summary>
+        /// Insert Operation is done on Movie cache if reponse is from online API.
+        /// </summary>
         public const string Insert = "Insert into MovieCache in MongoDB";
+        /// <summary>
+        /// End Point for the Get request of Movie info
+        /// </summary>
         public const string GetMovie = "https://localhost:44377/movie/id";
+
+        #endregion
 
 
         /// <summary>
@@ -29,6 +51,6 @@ namespace MovieDB.Helpers
         /// <summary>
         /// Testing ValidateAttribute Filter
         /// </summary>
-        public const string ID_Required = "Id id required";
+        public const string ID_Required = "Id is required";
     }
 }

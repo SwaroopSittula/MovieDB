@@ -19,14 +19,26 @@ namespace MovieDB.Repository
 {
     public class MovieRepository : IMovieRepository
     {
+        /// <summary>
+        /// variable to store HttpClientFactory settings and The MovieDB(TMDB) api properties like Base URL and Api Key.
+        /// </summary>
         private readonly IHttpClientFactory HttpClientFactory;
         private readonly IOptions<MovieDBSettings> ApiConfig;
 
-        //Mongo cache
+        /// <summary>
+        /// reference to Movie cache collection in MongoDB
+        /// Variable to store the Database settings from application.devlopment.json
+        /// </summary>
         private readonly IMongoCollection<MovieInfo> MovieCache;
         private readonly IOptions<DatabaseSettings> DBSettings;
 
 
+        /// <summary>
+        /// Constructor with required Dependency Injections
+        /// </summary>
+        /// <param name="httpClientFactory"></param>
+        /// <param name="apiConfig"></param>
+        /// <param name="dbSettings"></param>
         public MovieRepository(IHttpClientFactory httpClientFactory, IOptions<MovieDBSettings> apiConfig, IOptions<DatabaseSettings> dbSettings)
         {
             HttpClientFactory = httpClientFactory;
@@ -40,8 +52,20 @@ namespace MovieDB.Repository
         }
 
 
+        /// <summary>
+        /// Get Method to retrieve Movie Info for the requested Movie Id either from Online TMDB API or from the Movie Cache in MongoDB
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> GetMovie(int id)
         {
+
+            var transId = Guid.NewGuid().ToString();
+            if (AuditMiddleware.Logger != null)
+            { 
+                AuditLogger.RequestInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.FindMovie, id.ToString());
+            }
+
             //Checking Movie Cache in Mongo
             List<MovieInfo> result;
             using (MiniProfiler.Current.Step("Time taken to retrieve records from Movie Cache in MongoDB"))
@@ -69,9 +93,7 @@ namespace MovieDB.Repository
                 {
                     if (AuditMiddleware.Logger != null)
                     {
-                        var transId = Guid.NewGuid().ToString();
-                        AuditLogger.RequestInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.ApiFind, id.ToString());
-                        AuditLogger.ResponseInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.Insert, DBSettings.Value.DatabaseName, DBSettings.Value.CollectionName, result.ToString());
+                        AuditLogger.ResponseInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.ApiFind, DBSettings.Value.DatabaseName, DBSettings.Value.CollectionName, result.ToString());
                     }
 
                     var jsonResult = JsonConvert.DeserializeObject<MovieInfo>(responseBody);
@@ -129,8 +151,6 @@ namespace MovieDB.Repository
  
             if (AuditMiddleware.Logger != null)
             {
-                var transId = Guid.NewGuid().ToString();
-                AuditLogger.RequestInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.Find, id.ToString());
                 AuditLogger.ResponseInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.Find, DBSettings.Value.DatabaseName, DBSettings.Value.CollectionName, result.ToString());
             }
 
