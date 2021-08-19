@@ -1,14 +1,17 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using MovieDB.Models;
 using Newtonsoft.Json;
 using System;
-
-
+using System.Linq;
 
 namespace MovieDB.Helpers
 {
-    //ActionFilter = ValidateModel
+    /// <summary>
+    /// ActionFilter = ValidateModel
+    /// Used to validate the request payload Models in controllers generally
+    /// </summary>
     public class ValidateModelAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -19,13 +22,9 @@ namespace MovieDB.Helpers
                     var errorResponse = new ErrorResponse
                     {
                         StatusCode = 400,
-                        ErrorMessage = "Bad Request!"
-                        //ErrorMessage = string.Join(", ", context.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)).ToString()
+                        ErrorMessage = string.Join(", ", context.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)).ToString()
                     };
-                //context.Result = new BadRequestObjectResult(errorResponse)
-
-                Exception exception = new Exception(JsonConvert.SerializeObject(errorResponse));
-                throw exception;
+                context.Result = new BadRequestObjectResult(errorResponse);
             } 
         }
     }
