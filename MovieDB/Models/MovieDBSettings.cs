@@ -2,12 +2,21 @@
 {
     public class MovieDBSettings
     {
+        /// <summary>
+        /// ApiDetails type variable is used to store the online TMDB properties like BaseURL and ApiKey
+        /// </summary>
         public ApiDetails RestApi { get; set; }
     }
 
     public class ApiDetails
     {
+        /// <summary>
+        /// Base Url for Get request of Movie Info based on Movie Id provided
+        /// </summary>
         public string BaseUrl { get; set; }
+        /// <summary>
+        /// Api Key reqired to access the info from TMDB is stored in this property
+        /// </summary>
         public string ApiKey { get; set; }
 
         /// <summary>
