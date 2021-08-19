@@ -116,32 +116,25 @@ namespace MovieDB.Repository
                 else
                 {
                     //Response = 401(invalid api key) , 404(resouce not found)
-                    //var jsonResult = JsonConvert.DeserializeObject<FailureRepsonse>(responseBody)  //mapping API response to our FailureResponse
                     var errorResponse = new ErrorResponse();
-                    //int statusCode
 
                     if (response.Result.StatusCode == HttpStatusCode.NotFound)
                     {
                         errorResponse.ErrorMessage = "Resource Not Found!";
                         errorResponse.StatusCode = 404; //NotFound
-                        //statusCode = 404
                     }
                     else
                     {
                         errorResponse.ErrorMessage = "Unauthorized: Invalid Api Key!";
                         errorResponse.StatusCode = 401; //Unauthorized
-                        //statusCode = 401
                     }
 
-                    Exception exception = new Exception(JsonConvert.SerializeObject(errorResponse));
-                    throw exception;
-                    
-                    /*
-                      return new ContentResult
+                    return new ContentResult
+                    {
                         Content = JsonConvert.SerializeObject(errorResponse),
                         ContentType = Constants.Json,
-                        StatusCode = statusCode
-                    */
+                        StatusCode = errorResponse.StatusCode
+                    };
                 }
             }
 
