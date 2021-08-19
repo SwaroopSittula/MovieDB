@@ -10,11 +10,17 @@ using System.Threading.Tasks;
 
 namespace MovieDB.Controllers
 {
+    /// <summary>
+    /// Movie Controller class to route the http endpoint request to the Controller class Methods
+    /// </summary>
     [OpenApiTag("MovieDB", Description = "Get Movie | Movie Proxy")]
     [ApiController]
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
+        /// <summary>
+        /// Class property to store the instance of MovieRepository using Constructor Dependency Injection
+        /// </summary>
         private readonly IMovieRepository MovieRepo;
         public MovieController(IMovieRepository movieRepo)
         {
@@ -22,17 +28,28 @@ namespace MovieDB.Controllers
         }
 
 
+        /// <summary>
+        /// This is Get Method to retrieve Movie Info given a MovieId.
+        /// 
+        /// Here ValidateModel Filter does the following
+        /// 1) checks if input is int or not
+        /// 2) validate the annotations
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Produces("application/json")]
         [ValidateModel]
-        //1) checks if input is int or not      2) validate the annotations
-        // movie/no-input   movie/.    movie/..   --> no response (they point to different end points than this may be)
         public async Task<IActionResult> GetMovie([RegularExpression(@"^(\d+)$", ErrorMessage ="Bad Request!")] int id)
         {
             return await MovieRepo.GetMovie(id);
         }
 
 
+        /// <summary>
+        /// Health Chech Endpoint
+        /// </summary>
+        /// <returns></returns>
         #region IsAlive
         [ApiVersion("1.0")]
         [HttpGet("health", Name = "IsAlive")]
