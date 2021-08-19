@@ -23,16 +23,13 @@ namespace MovieDB.Helpers
         public const string FindMovie = "Find Movie for the provided Id";
         /// <summary>
         /// The query parameter for response is Find Movie from the online API source
+        /// And Insert into MovieCache in Mongo DB
         /// </summary>
-        public const string ApiFind = "Find(Get) from The Movie DB(TMDB) Api online";
+        public const string ApiFind = "Find(Get) from The Movie DB(TMDB) Api online and Insert into MovieCache in MongoDB";
         /// <summary>
         /// Requested Movie info response is retrieved from Movie cahce in MongoDB
         /// </summary>
         public const string Find = "Find from MovieCache in MongoDB";
-        /// <summary>
-        /// Insert Operation is done on Movie cache if reponse is from online API.
-        /// </summary>
-        public const string Insert = "Insert into MovieCache in MongoDB";
         /// <summary>
         /// End Point for the Get request of Movie info
         /// </summary>

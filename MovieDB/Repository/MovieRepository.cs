@@ -82,8 +82,6 @@ namespace MovieDB.Repository
                 using(MiniProfiler.Current.Step("Time taken to retrieve response from The MovieDB API"))
                 {
                     using var client = HttpClientFactory.CreateClient("MovieDbAPI");
-                    //using var response = client.GetAsync($"/{id}?api_key={ApiConfig.Value.RestApi.ApiKey}")
-                    //ApiConfig.Value.RestApi.RequestUrl(id)
                     response =  client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  
                     responseBody = response.Result.Content.ReadAsStringAsync().Result;
                 }
@@ -106,7 +104,6 @@ namespace MovieDB.Repository
                                     filter: filter,
                                     options: new ReplaceOptions { IsUpsert = true },
                                     replacement: jsonResult);
-                        //MovieCache.InsertOneAsync(jsonResult)
                     }
 
                     return new ContentResult
