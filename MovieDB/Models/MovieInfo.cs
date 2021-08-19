@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace MovieDB.Models
 {
+    /// <summary>
+    /// Model class is created based on success result available from The MovieDB(TMDB) API.
+    /// This Model class has all the Info available on a movie.
+    /// </summary>
     public class MovieInfo
     {
         [JsonProperty("adult")]
@@ -24,11 +28,20 @@ namespace MovieDB.Models
         [JsonProperty("homepage")] 
         public string Homepage { get; set; }
 
+        /// <summary>
+        ///  0,1,10 -some no resources id's
+        ///  Id goes above 30k start from positive integer
+        /// </summary>
         [JsonProperty("id")] 
-        public int Id { get; set; } //2-957,  0,1,10 - no resources
+        public int Id { get; set; }
 
+
+        /// <summary>
+        /// Properties given in TMDB API
+        /// minLength = 9, maxLength = 9 , pattern = ^tt[0-9]{7}
+        /// </summary>
         [JsonProperty("imdb_id")] 
-        public string ImdbId { get; set; }  //minLength = 9, maxLength = 9 , pattern = ^tt[0-9]{7}
+        public string ImdbId { get; set; }  
 
         [JsonProperty("original_language")] 
         public string OriginalLanguage { get; set; }
@@ -39,23 +52,35 @@ namespace MovieDB.Models
         [JsonProperty("overview")] 
         public string Overview { get; set; }
 
+        /// <summary>
+        /// Datatype = number
+        /// </summary>
         [JsonProperty("popularity")] 
-        public double Popularity { get; set; } //number
+        public double Popularity { get; set; } 
 
         [JsonProperty("poster_path")] 
         public string PosterPath { get; set; }
 
+        /// <summary>
+        /// array[object]
+        /// </summary>
         [JsonProperty("production_companies")] 
-        public List<ProductionCompanies> ProductionCompanies { get; set; } //array[object]
+        public List<ProductionCompanies> ProductionCompanies { get; set; } 
 
         [JsonProperty("production_countries")] 
         public List<ProductionCountries> ProductionCountries { get; set; }
 
+        /// <summary>
+        /// format = date
+        /// </summary>
         [JsonProperty("release_date")] 
-        public string ReleaseDate { get; set; } //format = date
+        public string ReleaseDate { get; set; }
 
+        /// <summary>
+        /// long?
+        /// </summary>
         [JsonProperty("revenue")] 
-        public int Revenue { get; set; } //long?
+        public int Revenue { get; set; } 
 
         [JsonProperty("runtime")] 
         public int? Runtime { get; set; }
@@ -63,8 +88,11 @@ namespace MovieDB.Models
         [JsonProperty("spoken_languages")]
         public List<SpokenLanguages> SpokenLanguages { get; set; }
 
+        /// <summary>
+        /// allowed values = Rumored, Planned, In Production, Post Production, Released, Canceled
+        /// </summary>
         [JsonProperty("status")] 
-        public string Status { get; set; } //allowed values = Rumored, Planned, In Production, Post Production, Released, Canceled
+        public string Status { get; set; } 
 
         [JsonProperty("tagline")] 
         public string Tagline { get; set; }
@@ -75,8 +103,11 @@ namespace MovieDB.Models
         [JsonProperty("video")] 
         public bool Video { get; set; }
 
+        /// <summary>
+        /// Datatype = number
+        /// </summary>
         [JsonProperty("vote_average")]
-        public double VoteAverage { get; set; } //number
+        public double VoteAverage { get; set; } 
 
         [JsonProperty("vote_count")] 
         public int VoteCount { get; set; }
