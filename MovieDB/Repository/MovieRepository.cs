@@ -83,7 +83,7 @@ namespace MovieDB.Repository
                 {
                     using var client = HttpClientFactory.CreateClient("MovieDbAPI");
                     response =  client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  
-                    responseBody = response.Result.Content.ReadAsStringAsync().Result;
+                    responseBody = await response.Result.Content.ReadAsStringAsync();
                 }
                 
                 //Success response
