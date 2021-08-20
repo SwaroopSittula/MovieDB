@@ -57,7 +57,7 @@ namespace MovieDB.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<ActionResult> GetMovie(int id)
+        public async Task<Object> GetMovie(int id)
         {
 
             var transId = Guid.NewGuid().ToString();

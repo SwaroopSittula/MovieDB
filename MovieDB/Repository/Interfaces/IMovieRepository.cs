@@ -14,7 +14,7 @@ namespace MovieDB.Repository.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ActionResult> GetMovie(int id);
+        Task<Object> GetMovie(int id);
 
         /// <summary>
         /// Health check endpoint abstraction
