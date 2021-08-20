@@ -12,10 +12,24 @@ using System.Threading.Tasks;
 
 namespace MovieDB.Middleware
 {
+    /// <summary>
+    /// Middle ware to divert logs containing PII(Personally Identifiable Information) into seperate lod folder
+    /// </summary>
     public class AuditMiddleware
     {
+        /// <summary>
+        /// variable to store next delegete in pipeline
+        /// </summary>
         private readonly RequestDelegate _next;
+
+        /// <summary>
+        /// log builder based on serilog configs
+        /// </summary>
         private readonly Logger _logger;
+
+        /// <summary>
+        /// Local Logger variable
+        /// </summary>
         public static Logger Logger { get; set; }
 
         public AuditMiddleware(RequestDelegate requestDelegate, IOptions<UserSettings> config)
@@ -35,6 +49,11 @@ namespace MovieDB.Middleware
             _next = requestDelegate;
         }
 
+        /// <summary>
+        /// Method to log the request and response and forward the context to next delegete in pipeline
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
             var transId = Guid.NewGuid().ToString();
