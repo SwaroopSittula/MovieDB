@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MovieDB.Models;
 using System.Threading.Tasks;
 
 namespace MovieDB.Repository.Interfaces
@@ -14,7 +11,7 @@ namespace MovieDB.Repository.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Object> GetMovie(int id);
+        Task<ResponseDto> GetMovie(int id);
 
         /// <summary>
         /// Health check endpoint abstraction

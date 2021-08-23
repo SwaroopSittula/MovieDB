@@ -22,11 +22,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using MovieDB;
 using Serilog;
-using Newtonsoft.Json;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using MovieDB.Middleware;
 
 namespace Tests
 {
@@ -75,11 +72,14 @@ namespace Tests
         }
 
 
-        //From The MovieDB API
+        /// <summary>
+        /// From The MovieDB API
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task SuccessFromAPI()
         {
-            var id = 78;//not in Movie Cache in Mongo DB
+            var id = 15;//not in Movie Cache in Mongo DB
             var reponse = await Controller.GetMovie(id) as ContentResult;
             Assert.AreEqual(200, reponse.StatusCode);
         }
@@ -87,30 +87,9 @@ namespace Tests
         [TestMethod]
         public async Task NotFoundInApi()
         {
-            // Arrange
-            var projectDir = Directory.GetCurrentDirectory();
-
-            var config = new ConfigurationBuilder()
-                .SetBasePath(projectDir)
-                .AddJsonFile("appsettings.Development.json")
-                .Build();
-            
-            config["MovieDBSettings:RestApi:ApiKey"] = "Wrong API Key";
-            var server = new TestServer(new WebHostBuilder()
-                .UseContentRoot(projectDir)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
-                .UseSerilog());
-
-
-            // Act
-            using (var client = server.CreateClient())
-            {
-                var id = 0; //cache
-                var result = await client.GetAsync($"/movie/{id}");
-
-                Assert.AreEqual(401, (int)result.StatusCode);
-            }
+            var id = 1;//no resource
+            var reponse = await Controller.GetMovie(id) as ContentResult;
+            Assert.AreEqual(404, reponse.StatusCode);
         }
 
         [TestMethod]
@@ -124,7 +103,7 @@ namespace Tests
                 .AddJsonFile("appsettings.Development.json")
                 .Build();
 
-            config["DatabaseSettings:ConnectionString"] = "Wrong  Connection String";
+            config["MovieDBSettings:RestApi:ApiKey"] = "Wrong API Key";
             var server = new TestServer(new WebHostBuilder()
                 .UseContentRoot(projectDir)
                 .UseConfiguration(config)
@@ -135,11 +114,11 @@ namespace Tests
             // Act
             using (var client = server.CreateClient())
             {
-                var id = 5; //cache
+                var id = 0; //Not in Cache, reource not found implies always not in cache
                 var result = await client.GetAsync($"/movie/{id}");
                 // Ensure Success StatusCode is returned from response
 
-                Assert.AreEqual(500, (int)result.StatusCode);
+                Assert.AreEqual(401, (int)result.StatusCode);
             }
         }
 
@@ -214,15 +193,9 @@ namespace Tests
                 new Dictionary<string, object>(),
                 new Mock<MovieController>(datarepo)
             );
-            try
-            {
-                validationFilter.OnActionExecuting(actionExecutingContext);
-            }
-            catch(Exception ex)
-            {
-                var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(ex.Message);
-                Assert.AreEqual(400, errorResponse.StatusCode);
-            }
+            
+            validationFilter.OnActionExecuting(actionExecutingContext);
+            Assert.IsInstanceOfType(actionExecutingContext.Result, typeof(BadRequestObjectResult));
         }
 
         //	Add the following lines of code to test Startup.cs class.

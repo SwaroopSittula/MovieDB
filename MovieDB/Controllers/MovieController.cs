@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieDB.Helpers;
+using MovieDB.Models;
 using MovieDB.Repository.Interfaces;
 using Newtonsoft.Json;
 using NSwag.Annotations;
@@ -42,7 +43,13 @@ namespace MovieDB.Controllers
         [ValidateModel]
         public async Task<IActionResult> GetMovie([RegularExpression(@"^(\d+)$", ErrorMessage ="Bad Request!")] int id)
         {
-            return await MovieRepo.GetMovie(id);
+            ResponseDto reponse = await MovieRepo.GetMovie(id);
+            return new ContentResult()
+            {
+                Content = reponse.Response,
+                ContentType = Constants.Json,
+                StatusCode = reponse.StatusCode
+            };
         }
 
 

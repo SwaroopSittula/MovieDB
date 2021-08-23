@@ -57,12 +57,12 @@ namespace MovieDB.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Object> GetMovie(int id)
+        public async Task<ResponseDto> GetMovie(int id)
         {
 
             var transId = Guid.NewGuid().ToString();
             if (AuditMiddleware.Logger != null)
-            { 
+            {
                 AuditLogger.RequestInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.FindMovie, id.ToString());
             }
 
@@ -72,20 +72,20 @@ namespace MovieDB.Repository
             {
                 result = MovieCache.Find(movie => movie.Id == id).ToList();
             }
-                
+
             //List is Empty retrieve from API
-            if (!result.Any()) 
+            if (!result.Any())
             {
                 //Response from API
                 Task<HttpResponseMessage> response;
                 string responseBody;
-                using(MiniProfiler.Current.Step("Time taken to retrieve response from The MovieDB API"))
+                using (MiniProfiler.Current.Step("Time taken to retrieve response from The MovieDB API"))
                 {
                     using var client = HttpClientFactory.CreateClient("MovieDbAPI");
-                    response =  client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));  
+                    response = client.GetAsync(client.BaseAddress + ApiConfig.Value.RestApi.AppendApiKey(id));
                     responseBody = await response.Result.Content.ReadAsStringAsync();
                 }
-                
+
                 //Success response
                 if (response.Result.StatusCode == HttpStatusCode.OK)
                 {
@@ -97,8 +97,8 @@ namespace MovieDB.Repository
                     var jsonResult = JsonConvert.DeserializeObject<MovieInfo>(responseBody);
 
                     //Update Movie Cache in MongoDB
-                    var filter = Builders<MovieInfo>.Filter.Eq(movie => movie.Id, id);     
-                    using(MiniProfiler.Current.Step("Time taken to Upsert record into Movie Cache in MongoDB"))
+                    var filter = Builders<MovieInfo>.Filter.Eq(movie => movie.Id, id);
+                    using (MiniProfiler.Current.Step("Time taken to Upsert record into Movie Cache in MongoDB"))
                     {
                         await MovieCache.ReplaceOneAsync(
                                     filter: filter,
@@ -106,10 +106,9 @@ namespace MovieDB.Repository
                                     replacement: jsonResult);
                     }
 
-                    return new ContentResult
+                    return new ResponseDto()
                     {
-                        Content = JsonConvert.SerializeObject(jsonResult), //getting string content for responseBody
-                        ContentType = Constants.Json,
+                        Response = JsonConvert.SerializeObject(jsonResult),
                         StatusCode = 200
                     };
                 }
@@ -129,25 +128,23 @@ namespace MovieDB.Repository
                         errorResponse.StatusCode = 401; //Unauthorized
                     }
 
-                    return new ContentResult
+                    return new ResponseDto()
                     {
-                        Content = JsonConvert.SerializeObject(errorResponse),
-                        ContentType = Constants.Json,
+                        Response = JsonConvert.SerializeObject(errorResponse),
                         StatusCode = errorResponse.StatusCode
                     };
                 }
             }
 
- 
+
             if (AuditMiddleware.Logger != null)
             {
                 AuditLogger.ResponseInfo(transId, Constants.GetMethod, Constants.GetMovie, Constants.Find, DBSettings.Value.DatabaseName, DBSettings.Value.CollectionName, result.ToString());
             }
 
-            return new ContentResult
+            return new ResponseDto()
             {
-                Content = JsonConvert.SerializeObject(result[0]),
-                ContentType = Constants.Json,
+                Response = JsonConvert.SerializeObject(result[0]),
                 StatusCode = 200
             };
         }
