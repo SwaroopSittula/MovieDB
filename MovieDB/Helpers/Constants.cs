@@ -33,7 +33,7 @@ namespace MovieDB.Helpers
         /// <summary>
         /// End Point for the Get request of Movie info
         /// </summary>
-        public const string GetMovie = "https://localhost:44377/movie/id";
+        public const string GetMovie = "https://localhost:port/movie/id";
 
         #endregion
 

@@ -39,7 +39,6 @@ namespace MovieDB.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces("application/json")]
         [ValidateModel]
         public async Task<IActionResult> GetMovie([RegularExpression(@"^(\d+)$", ErrorMessage ="Bad Request!")] int id)
         {
