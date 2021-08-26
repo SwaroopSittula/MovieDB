@@ -46,7 +46,10 @@ namespace MovieDB
 
             services.AddControllers();
 
-            services.AddSwaggerDocument();
+            services.AddSwaggerDocument( doc =>
+            {
+                doc.Title = "Movie Proxy API";
+            });
             if (Configuration["UserSettings:EnableMiniProfiler"] == "True")
             {
                 services.AddMiniProfiler(options =>
