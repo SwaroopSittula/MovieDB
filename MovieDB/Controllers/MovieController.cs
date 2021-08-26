@@ -54,7 +54,7 @@ namespace MovieDB.Controllers
 
 
         /// <summary>
-        /// Health Chech Endpoint
+        /// Health Check Endpoint
         /// </summary>
         /// <returns></returns>
         #region IsAlive
