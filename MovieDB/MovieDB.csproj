@@ -24,7 +24,5 @@
     <Folder Include="Logs\operational\" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties logs_4audit_4log-20210811_1log__JsonSchema="https://json.schemastore.org/gpc.json" /></VisualStudio></ProjectExtensions>
-
 
 </Project>
