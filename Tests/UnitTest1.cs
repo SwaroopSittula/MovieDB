@@ -24,6 +24,7 @@ using MovieDB;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Newtonsoft.Json;
 
 namespace Tests
 {
@@ -195,7 +196,10 @@ namespace Tests
             );
             
             validationFilter.OnActionExecuting(actionExecutingContext);
-            Assert.IsInstanceOfType(actionExecutingContext.Result, typeof(BadRequestObjectResult));
+            //Assert.IsInstanceOfType(actionExecutingContext.Result, typeof(BadRequestObjectResult))
+
+            var response = actionExecutingContext.Result as ContentResult;
+            Assert.AreEqual(400, response.StatusCode);
         }
 
         //	Add the following lines of code to test Startup.cs class.

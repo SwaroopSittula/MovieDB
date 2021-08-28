@@ -24,7 +24,16 @@ namespace MovieDB.Helpers
                         StatusCode = 400,
                         ErrorMessage = string.Join(", ", context.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)).ToString()
                     };
-                context.Result = new BadRequestObjectResult(errorResponse);
+                //following code => inconsistency in error response (giving camel case as response)
+                //context.Result = new BadRequestObjectResult(errorResponse)
+
+                //following results in pascal case output response
+                context.Result = new ContentResult
+                { 
+                    Content = JsonConvert.SerializeObject(errorResponse),
+                    ContentType = Constants.Json,
+                    StatusCode = 400
+                };
             } 
         }
     }
