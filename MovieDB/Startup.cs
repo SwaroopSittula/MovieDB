@@ -11,6 +11,7 @@ using MovieDB.Repository.Interfaces;
 using Serilog;
 using StackExchange.Profiling;
 using System;
+using System.Text.Json;
 
 namespace MovieDB
 {
@@ -44,7 +45,14 @@ namespace MovieDB
             //Register application dependancies
             services.AddSingleton<IMovieRepository, MovieRepository>();
 
-            services.AddControllers();
+            //https://stackoverflow.com/questions/58476681/asp-net-core-3-0-system-text-json-camel-case-serialization
+            //camel case not working
+            // = null => pascal case
+            services.AddControllers()
+                .AddJsonOptions(options => 
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy =  JsonNamingPolicy.CamelCase;
+                });
 
             services.AddSwaggerDocument( doc =>
             {
