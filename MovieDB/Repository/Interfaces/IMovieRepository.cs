@@ -18,5 +18,11 @@ namespace MovieDB.Repository.Interfaces
         /// </summary>
         /// <returns></returns>
         public Task<bool> IsAliveAsync();
+
+
+        /// <summary>
+        /// Loads all the data available in TMDB to the Cache
+        /// </summary>
+        public Task Cache();
     }
 }

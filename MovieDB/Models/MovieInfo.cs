@@ -20,7 +20,7 @@ namespace MovieDB.Models
         public BelongsToCollection BelongsToCollection { get; set; } //mostly null.......check movie id = 11,21
 
         [JsonProperty("budget")] 
-        public int Budget { get; set; }
+        public long Budget { get; set; }
 
         [JsonProperty("genres")] 
         public Genres[] Genres { get; set; }
@@ -78,9 +78,10 @@ namespace MovieDB.Models
 
         /// <summary>
         /// long?
+        /// yes for id=19995 value exceeds capacity of int
         /// </summary>
         [JsonProperty("revenue")] 
-        public int Revenue { get; set; } 
+        public long Revenue { get; set; } 
 
         [JsonProperty("runtime")] 
         public int? Runtime { get; set; }

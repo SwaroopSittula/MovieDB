@@ -51,6 +51,14 @@ namespace MovieDB.Controllers
             };
         }
 
+        [HttpGet]
+        public Task Cache()
+        {
+            MovieRepo.Cache();
+            return Task.CompletedTask;
+        }
+
+
 
         /// <summary>
         /// Health Check Endpoint

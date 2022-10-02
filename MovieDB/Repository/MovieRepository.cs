@@ -150,6 +150,20 @@ namespace MovieDB.Repository
         }
 
 
+
+        /// <summary>
+        /// Adding this class to cache the movie records from API
+        /// </summary>
+        /// <returns></returns>
+        public async Task Cache()
+        {
+            for (var i = 40000; i <100000 ; i++)
+            {
+                await GetMovie(i);
+            }
+        }
+
+
         #region IsAlive
         public async Task<bool> IsAliveAsync()
         {
